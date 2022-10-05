@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Features;
 
-public class LibraryService:ILibraryService
+public class LibraryService : ILibraryService
 {
-    
     private readonly DataContext _dataContext;
 
     public LibraryService(DataContext dataContext)

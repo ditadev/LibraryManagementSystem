@@ -1,36 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Library.Features;
 using Library.Model;
 using Library.Persistence;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Library.Api.Controllers
+namespace Library.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize]
+public class LibraryController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
-    public class LibraryController : ControllerBase
+    private readonly DataContext _dataContext;
+    private readonly ILibraryService _libraryService;
+
+    public LibraryController(DataContext dataContext, ILibraryService libraryService)
     {
-        private readonly DataContext _dataContext;
-        private readonly ILibraryService _libraryService;
+        _dataContext = dataContext;
+        _libraryService = libraryService;
+    }
 
-        public LibraryController(DataContext dataContext,ILibraryService libraryService)
-        {
-            _dataContext = dataContext;
-            _libraryService = libraryService;
-        }
-
-        [HttpGet]
-        [Authorize(Roles = "Customer")]
-        public async Task<ActionResult<List<Book>>> GetBooks()
-        {
-            var books = await _libraryService.GetBooks();
-            return Ok(books);
-        }
+    [HttpGet]
+    [Authorize(Roles = "Customer")]
+    public async Task<ActionResult<List<Book>>> GetBooks()
+    {
+        var books = await _libraryService.GetBooks();
+        return Ok(books);
     }
 }

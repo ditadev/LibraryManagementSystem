@@ -1,11 +1,10 @@
-using Microsoft.EntityFrameworkCore;
 using Library.Model;
-using Microsoft.Extensions.DependencyModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.Persistence;
-public class DataContext:DbContext
+
+public class DataContext : DbContext
 {
-    
     public DataContext()
     {
     }
@@ -14,13 +13,15 @@ public class DataContext:DbContext
         : base(options)
     {
     }
+
+    public DbSet<Model.Library> Libraries { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Book> Books { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         options.UseNpgsql("Server=127.0.0.1;Port=5432;Database=LibraryService;UserId=postgres;");
     }
-    public DbSet<Model.Library> Libraries { get; set; }
-    public DbSet<Customer> Customers { get; set; }
-    public DbSet<Book> Books { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,7 +33,7 @@ public class DataContext:DbContext
         library.HasKey(l => l.LibraryId);
         customer.HasKey(c => c.Username);
         book.HasKey(b => b.ISBN);
-        
+
         book.HasOne(c => c.Customers)
             .WithMany(b => b.Books)
             .HasForeignKey("CustomerId").IsRequired();
@@ -41,5 +42,4 @@ public class DataContext:DbContext
 
         customer.Ignore(x => x.Password);
     }
-
 }

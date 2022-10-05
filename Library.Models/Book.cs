@@ -13,7 +13,8 @@ public class Book
     public DateTime ReturnDate { get; set; }
     public Customer Customers { get; set; }
     public string CustomerId { get; set; }
-    [JsonIgnore]
-    public Library Library { get; set; }
+
+    [JsonIgnore] public Library Library { get; set; }
+
     public string LibraryId { get; set; }
 }
