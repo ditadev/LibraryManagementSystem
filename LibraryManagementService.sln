@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Models", "Library.M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Persistence", "Library.Persistence\Library.Persistence.csproj", "{F988794D-6DB7-44D3-B284-540DB05F69DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Features", "Library.Features\Library.Features.csproj", "{0328071E-89F5-4E39-BFB9-BF8CB7322637}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{F988794D-6DB7-44D3-B284-540DB05F69DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F988794D-6DB7-44D3-B284-540DB05F69DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F988794D-6DB7-44D3-B284-540DB05F69DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0328071E-89F5-4E39-BFB9-BF8CB7322637}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0328071E-89F5-4E39-BFB9-BF8CB7322637}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0328071E-89F5-4E39-BFB9-BF8CB7322637}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0328071E-89F5-4E39-BFB9-BF8CB7322637}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
