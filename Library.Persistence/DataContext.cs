@@ -16,7 +16,7 @@ public class DataContext:DbContext
     }
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseNpgsql("Server=127.0.0.1;Port=5432;Database=Library;UserId=postgres;");
+        options.UseNpgsql("Server=127.0.0.1;Port=5432;Database=LibraryService;UserId=postgres;");
     }
     public DbSet<Model.Library> Libraries { get; set; }
     public DbSet<Customer> Customers { get; set; }
@@ -29,15 +29,15 @@ public class DataContext:DbContext
         var customer = modelBuilder.Entity<Customer>();
         var book = modelBuilder.Entity<Book>();
 
-        library.HasKey(l => l.LibraryName);
+        library.HasKey(l => l.LibraryId);
         customer.HasKey(c => c.Username);
         book.HasKey(b => b.ISBN);
-        library.HasMany(l => l.Books)
-            .WithOne(b => b.Library)
-            .HasForeignKey("LibraryName").IsRequired();
+        
         book.HasOne(c => c.Customers)
             .WithMany(b => b.Books)
             .HasForeignKey("CustomerId").IsRequired();
+        customer.HasOne(c => c.Library)
+            .WithMany(l => l.Customers).HasForeignKey("LibraryId");
 
         customer.Ignore(x => x.Password);
     }

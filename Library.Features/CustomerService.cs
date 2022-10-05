@@ -27,14 +27,15 @@ public class CustomerService:ICustomerService
 
     public async Task<string?> CreateRandomToken()
     {
-        return await Task.FromResult(Convert.ToHexString(RandomNumberGenerator.GetBytes(16)));
+        return await Task.FromResult(Convert.ToHexString(RandomNumberGenerator.GetBytes(8)));
     }
 
     public async Task<string> CreateJwtToken(Customer customer)
     {
         var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, customer.Username)
+                new(ClaimTypes.Name, customer.Username),
+                new(ClaimTypes.Role, "Customer")
             };
 
             var key = new SymmetricSecurityKey(

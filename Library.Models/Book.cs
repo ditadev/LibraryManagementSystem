@@ -15,5 +15,5 @@ public class Book
     public string CustomerId { get; set; }
     [JsonIgnore]
     public Library Library { get; set; }
-    public string LibraryName { get; set; }
+    public string LibraryId { get; set; }
 }

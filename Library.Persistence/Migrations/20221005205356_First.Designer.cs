@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221005181547_First")]
+    [Migration("20221005205356_First")]
     partial class First
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,7 +47,7 @@ namespace Library.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("LibraryName")
+                    b.Property<string>("LibraryId")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -62,7 +62,7 @@ namespace Library.Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("LibraryName");
+                    b.HasIndex("LibraryId");
 
                     b.ToTable("Books");
                 });
@@ -88,7 +88,7 @@ namespace Library.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("LibraryName")
+                    b.Property<string>("LibraryId")
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
@@ -108,17 +108,25 @@ namespace Library.Persistence.Migrations
 
                     b.HasKey("Username");
 
-                    b.HasIndex("LibraryName");
+                    b.HasIndex("LibraryId");
 
                     b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Library.Model.Library", b =>
                 {
-                    b.Property<string>("LibraryName")
+                    b.Property<string>("LibraryId")
                         .HasColumnType("text");
 
-                    b.HasKey("LibraryName");
+                    b.Property<string>("LibraryName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("LibraryId");
 
                     b.ToTable("Libraries");
                 });
@@ -133,7 +141,7 @@ namespace Library.Persistence.Migrations
 
                     b.HasOne("Library.Model.Library", "Library")
                         .WithMany("Books")
-                        .HasForeignKey("LibraryName")
+                        .HasForeignKey("LibraryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -144,9 +152,11 @@ namespace Library.Persistence.Migrations
 
             modelBuilder.Entity("Library.Model.Customer", b =>
                 {
-                    b.HasOne("Library.Model.Library", null)
+                    b.HasOne("Library.Model.Library", "Library")
                         .WithMany("Customers")
-                        .HasForeignKey("LibraryName");
+                        .HasForeignKey("LibraryId");
+
+                    b.Navigation("Library");
                 });
 
             modelBuilder.Entity("Library.Model.Customer", b =>

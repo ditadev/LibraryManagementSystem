@@ -28,12 +28,13 @@ namespace Library.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> Register(RegisterUserRequest request)
         {
+            var library = await _dataContext.Libraries.Where(l=>l.Username==request.Username).FirstOrDefaultAsync();
             var customer = await _dataContext.Customers.Where(c => c.Email == request.Email).FirstOrDefaultAsync();
             if (customer != null)
             {
                 return BadRequest("User Already Exist");
             }
-            await _customerService.CreatePasswordHash(request.Password);
+            var passwordHash = await _customerService.CreatePasswordHash(request.Password);
             var Customer = new Customer()
             {
                 Username = request.Username,
@@ -42,11 +43,14 @@ namespace Library.Api.Controllers
                 Firstname = request.Firstname,
                 Lastname = request.Lastname,
                 Address = request.Address,
+                Library = library,
                 VerificationToken = await _customerService.CreateRandomToken(),
+                PasswordHash = passwordHash
+                
             };
             _dataContext.Customers.Add(Customer);
             await _dataContext.SaveChangesAsync();
-            return Ok(" Successfully Created");
+            return Ok(" Successfully Created :)");
         }
         
         [HttpPost]
@@ -62,13 +66,13 @@ namespace Library.Api.Controllers
             {
                 return BadRequest("Not verified :(");
             }
-
+            
             if (!_customerService.VerifyPasswordHash(request.Password,customer.PasswordHash))
             {
-                return BadRequest("Incorrect Password :(");
+                return BadRequest("Incorrect Username/Password :(");
             }
-
-            return Ok($"Welcome back, {customer.Email}! :)");
+            var token = await _customerService.CreateJwtToken(customer);
+            return Ok($"Welcome back, {customer.Email}! :)\n\n{token}");
         }
         [HttpPost]
         public async Task<ActionResult> Verify(string Token)
@@ -83,39 +87,6 @@ namespace Library.Api.Controllers
             await _dataContext.SaveChangesAsync();
             
             return Ok("User Verified :)");
-        }
-        [HttpPost]
-        public async Task<ActionResult> ForgotPassword(string Email)
-        {
-            var customer = await _dataContext.Customers.FirstOrDefaultAsync(u => u.Email ==Email);
-            if (User==null)
-            {
-                return BadRequest("User not found :(");
-            }
-
-            customer.PasswordResetToken = await _customerService.CreateRandomToken();
-            customer.ResetTokenExpires = DateTime.UtcNow.AddMinutes(5);
-            await _dataContext.SaveChangesAsync();
-            
-            return Ok("You may now reset your password :)");
-        }
-        [HttpPost]
-        public async Task<ActionResult> ResetPassword(ResetPasswordRequest request)
-        {
-            var customer = await _dataContext.Customers.FirstOrDefaultAsync(u => u.PasswordResetToken ==request.Token);
-            if (User==null||customer.ResetTokenExpires<DateTime.UtcNow)
-            {
-                return BadRequest("Invalid Token :(");
-            }
-
-            var passwordHash = await _customerService.CreatePasswordHash(request.Password);
-            customer.PasswordResetToken = null;
-            customer.ResetTokenExpires = null;
-            customer.PasswordHash = passwordHash;
-            
-            await _dataContext.SaveChangesAsync();
-            
-            return Ok("Password successfully reset :)");
         }
     }
 }

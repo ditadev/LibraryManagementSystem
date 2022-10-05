@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Library.Models\Library.Models.csproj" />
+      <ProjectReference Include="..\Library.Persistence\Library.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

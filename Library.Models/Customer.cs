@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Library.Model;
@@ -9,6 +10,7 @@ public class Customer
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public string Address { get; set; }
+        public Library? Library { get; set; }
         public List<Book> Books { get; set; }
         [Required,EmailAddress]
         public string Email { get; set; }
@@ -23,8 +25,4 @@ public class Customer
         public string? PasswordResetToken { get; set; }
         [JsonIgnore]
         public DateTime? ResetTokenExpires { get; set; }
-        
-        
-    
-    
 }

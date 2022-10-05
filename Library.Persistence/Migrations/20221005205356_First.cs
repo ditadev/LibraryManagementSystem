@@ -13,11 +13,13 @@ namespace Library.Persistence.Migrations
                 name: "Libraries",
                 columns: table => new
                 {
-                    LibraryName = table.Column<string>(type: "text", nullable: false)
+                    LibraryId = table.Column<string>(type: "text", nullable: false),
+                    LibraryName = table.Column<string>(type: "text", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Libraries", x => x.LibraryName);
+                    table.PrimaryKey("PK_Libraries", x => x.LibraryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -28,22 +30,22 @@ namespace Library.Persistence.Migrations
                     Firstname = table.Column<string>(type: "text", nullable: false),
                     Lastname = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
+                    LibraryId = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
                     VerificationToken = table.Column<string>(type: "text", nullable: true),
                     VerifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PasswordResetToken = table.Column<string>(type: "text", nullable: true),
-                    ResetTokenExpires = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LibraryName = table.Column<string>(type: "text", nullable: true)
+                    ResetTokenExpires = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customers", x => x.Username);
                     table.ForeignKey(
-                        name: "FK_Customers_Libraries_LibraryName",
-                        column: x => x.LibraryName,
+                        name: "FK_Customers_Libraries_LibraryId",
+                        column: x => x.LibraryId,
                         principalTable: "Libraries",
-                        principalColumn: "LibraryName");
+                        principalColumn: "LibraryId");
                 });
 
             migrationBuilder.CreateTable(
@@ -58,7 +60,7 @@ namespace Library.Persistence.Migrations
                     Collected = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ReturnDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CustomerId = table.Column<string>(type: "text", nullable: false),
-                    LibraryName = table.Column<string>(type: "text", nullable: false)
+                    LibraryId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,10 +72,10 @@ namespace Library.Persistence.Migrations
                         principalColumn: "Username",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Books_Libraries_LibraryName",
-                        column: x => x.LibraryName,
+                        name: "FK_Books_Libraries_LibraryId",
+                        column: x => x.LibraryId,
                         principalTable: "Libraries",
-                        principalColumn: "LibraryName",
+                        principalColumn: "LibraryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -83,14 +85,14 @@ namespace Library.Persistence.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Books_LibraryName",
+                name: "IX_Books_LibraryId",
                 table: "Books",
-                column: "LibraryName");
+                column: "LibraryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customers_LibraryName",
+                name: "IX_Customers_LibraryId",
                 table: "Customers",
-                column: "LibraryName");
+                column: "LibraryId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
