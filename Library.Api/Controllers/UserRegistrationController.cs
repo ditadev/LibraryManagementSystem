@@ -23,7 +23,6 @@ public class UserRegistrationController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Register(RegisterUserRequest request)
     {
-        var library = await _dataContext.Libraries.Where(l => l.Username == request.Username).FirstOrDefaultAsync();
         var customer = await _dataContext.Customers.Where(c => c.Email == request.Email).FirstOrDefaultAsync();
         if (customer != null) return BadRequest("User Already Exist");
         var passwordHash = await _customerService.CreatePasswordHash(request.Password);
@@ -35,7 +34,6 @@ public class UserRegistrationController : ControllerBase
             Firstname = request.Firstname,
             Lastname = request.Lastname,
             Address = request.Address,
-            Library = library,
             VerificationToken = await _customerService.CreateRandomToken(),
             PasswordHash = passwordHash
         };

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221005205356_First")]
+    [Migration("20221006143402_First")]
     partial class First
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,10 +119,6 @@ namespace Library.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LibraryName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 

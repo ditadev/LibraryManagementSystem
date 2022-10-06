@@ -14,8 +14,7 @@ namespace Library.Persistence.Migrations
                 columns: table => new
                 {
                     LibraryId = table.Column<string>(type: "text", nullable: false),
-                    LibraryName = table.Column<string>(type: "text", nullable: false),
-                    Username = table.Column<string>(type: "text", nullable: false)
+                    LibraryName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
