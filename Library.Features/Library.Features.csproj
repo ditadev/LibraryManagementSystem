@@ -7,14 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0"/>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.10.0"/>
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.10.0"/>
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.10.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.10.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Library.Persistence\Library.Persistence.csproj"/>
+        <ProjectReference Include="..\Library.Persistence\Library.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

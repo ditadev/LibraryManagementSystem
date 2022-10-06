@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221006143402_First")]
+    [Migration("20221006160613_First")]
     partial class First
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,47 @@ namespace Library.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Library.Model.AdminId", b =>
+                {
+                    b.Property<string>("NewAdminId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.ToTable("AdminIds");
+                });
+
+            modelBuilder.Entity("Library.Model.Administrator", b =>
+                {
+                    b.Property<string>("AdminId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LibraryId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordResetToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResetTokenExpires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("AdminId");
+
+                    b.HasIndex("LibraryId");
+
+                    b.ToTable("Administrators");
+                });
 
             modelBuilder.Entity("Library.Model.Book", b =>
                 {
@@ -127,6 +168,15 @@ namespace Library.Persistence.Migrations
                     b.ToTable("Libraries");
                 });
 
+            modelBuilder.Entity("Library.Model.Administrator", b =>
+                {
+                    b.HasOne("Library.Model.Library", "Library")
+                        .WithMany("Administrators")
+                        .HasForeignKey("LibraryId");
+
+                    b.Navigation("Library");
+                });
+
             modelBuilder.Entity("Library.Model.Book", b =>
                 {
                     b.HasOne("Library.Model.Customer", "Customers")
@@ -162,6 +212,8 @@ namespace Library.Persistence.Migrations
 
             modelBuilder.Entity("Library.Model.Library", b =>
                 {
+                    b.Navigation("Administrators");
+
                     b.Navigation("Books");
 
                     b.Navigation("Customers");

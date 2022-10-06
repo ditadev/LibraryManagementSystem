@@ -11,13 +11,13 @@ namespace Library.Api.Controllers;
 [ApiController]
 public class UserRegistrationController : ControllerBase
 {
-    private readonly ICustomerService _customerService;
+    private readonly IRegistrationService _registrationService;
     private readonly DataContext _dataContext;
 
-    public UserRegistrationController(DataContext dataContext, ICustomerService customerService)
+    public UserRegistrationController(DataContext dataContext, IRegistrationService registrationService)
     {
         _dataContext = dataContext;
-        _customerService = customerService;
+        _registrationService = registrationService;
     }
 
     [HttpPost]
@@ -25,7 +25,7 @@ public class UserRegistrationController : ControllerBase
     {
         var customer = await _dataContext.Customers.Where(c => c.Email == request.Email).FirstOrDefaultAsync();
         if (customer != null) return BadRequest("User Already Exist");
-        var passwordHash = await _customerService.CreatePasswordHash(request.Password);
+        var passwordHash = await _registrationService.CreatePasswordHash(request.Password);
         var Customer = new Customer
         {
             Username = request.Username,
@@ -34,7 +34,7 @@ public class UserRegistrationController : ControllerBase
             Firstname = request.Firstname,
             Lastname = request.Lastname,
             Address = request.Address,
-            VerificationToken = await _customerService.CreateRandomToken(),
+            VerificationToken = await _registrationService.CreateRandomToken(),
             PasswordHash = passwordHash
         };
         _dataContext.Customers.Add(Customer);
@@ -50,9 +50,9 @@ public class UserRegistrationController : ControllerBase
 
         if (customer.VerifiedAt == null) return BadRequest("Not verified :(");
 
-        if (!_customerService.VerifyPasswordHash(request.Password, customer.PasswordHash))
+        if (!_registrationService.VerifyPasswordHash(request.Password, customer.PasswordHash))
             return BadRequest("Incorrect Username/Password :(");
-        var token = await _customerService.CreateJwtToken(customer);
+        var token = await _registrationService.CreateCustomerJwt(customer);
         return Ok($"Welcome back, {customer.Email}! :)\n\n{token}");
     }
 

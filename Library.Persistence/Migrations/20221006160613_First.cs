@@ -10,6 +10,16 @@ namespace Library.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AdminIds",
+                columns: table => new
+                {
+                    NewAdminId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Libraries",
                 columns: table => new
                 {
@@ -19,6 +29,28 @@ namespace Library.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Libraries", x => x.LibraryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Administrators",
+                columns: table => new
+                {
+                    AdminId = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    PasswordResetToken = table.Column<string>(type: "text", nullable: true),
+                    ResetTokenExpires = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LibraryId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Administrators", x => x.AdminId);
+                    table.ForeignKey(
+                        name: "FK_Administrators_Libraries_LibraryId",
+                        column: x => x.LibraryId,
+                        principalTable: "Libraries",
+                        principalColumn: "LibraryId");
                 });
 
             migrationBuilder.CreateTable(
@@ -79,6 +111,11 @@ namespace Library.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Administrators_LibraryId",
+                table: "Administrators",
+                column: "LibraryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Books_CustomerId",
                 table: "Books",
                 column: "CustomerId");
@@ -96,6 +133,12 @@ namespace Library.Persistence.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AdminIds");
+
+            migrationBuilder.DropTable(
+                name: "Administrators");
+
             migrationBuilder.DropTable(
                 name: "Books");
 

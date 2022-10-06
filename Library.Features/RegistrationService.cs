@@ -8,11 +8,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Library.Features;
 
-public class CustomerService : ICustomerService
+public class RegistrationService : IRegistrationService
 {
     private readonly IConfiguration _configuration;
 
-    public CustomerService(IConfiguration configuration)
+    public RegistrationService(IConfiguration configuration)
     {
         _configuration = configuration;
     }
@@ -32,7 +32,7 @@ public class CustomerService : ICustomerService
         return await Task.FromResult(Convert.ToHexString(RandomNumberGenerator.GetBytes(8)));
     }
 
-    public async Task<string> CreateJwtToken(Customer customer)
+    public async Task<string> CreateCustomerJwt(Customer customer)
     {
         var claims = new List<Claim>
         {
@@ -49,6 +49,29 @@ public class CustomerService : ICustomerService
         (
             claims: claims,
             expires: DateTime.Now.AddDays(1),
+            signingCredentials: cred
+        );
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+        return await Task.FromResult(jwt);
+    }
+    public async Task<string?> CreateAdministratorJwt(Administrator admin)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, admin.AdminId),
+            new(ClaimTypes.Role, "Admin")
+        };
+
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+
+        var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        var token = new JwtSecurityToken
+        (
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(30),
             signingCredentials: cred
         );
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);

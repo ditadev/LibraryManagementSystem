@@ -10,13 +10,13 @@ namespace Library.Api.Controllers;
 [ApiController]
 public class PasswordResetController : ControllerBase
 {
-    private readonly ICustomerService _customerService;
+    private readonly IRegistrationService _registrationService;
     private readonly DataContext _dataContext;
 
-    public PasswordResetController(DataContext dataContext, ICustomerService customerService)
+    public PasswordResetController(DataContext dataContext, IRegistrationService registrationService)
     {
         _dataContext = dataContext;
-        _customerService = customerService;
+        _registrationService = registrationService;
     }
 
     [HttpPost]
@@ -25,7 +25,7 @@ public class PasswordResetController : ControllerBase
         var customer = await _dataContext.Customers.FirstOrDefaultAsync(c => c.Email == Email);
         if (customer == null) return BadRequest("User not found :(");
 
-        customer.PasswordResetToken = await _customerService.CreateRandomToken();
+        customer.PasswordResetToken = await _registrationService.CreateRandomToken();
         customer.ResetTokenExpires = DateTime.UtcNow.AddMinutes(5);
         await _dataContext.SaveChangesAsync();
 
@@ -38,7 +38,7 @@ public class PasswordResetController : ControllerBase
         var customer = await _dataContext.Customers.FirstOrDefaultAsync(c => c.PasswordResetToken == request.Token);
         if (customer == null || customer.ResetTokenExpires < DateTime.UtcNow) return BadRequest("Invalid Token :(");
 
-        var passwordHash = await _customerService.CreatePasswordHash(request.Password);
+        var passwordHash = await _registrationService.CreatePasswordHash(request.Password);
         customer.PasswordResetToken = null;
         customer.ResetTokenExpires = null;
         customer.PasswordHash = passwordHash;
