@@ -67,7 +67,7 @@ namespace Library.Api.Controllers
                 if (Admin == null) return BadRequest("User not found :(");
 
                 Admin.PasswordResetToken = await _registrationService.CreateRandomToken();
-                Admin.ResetTokenExpires = DateTime.UtcNow.AddMinutes(5);
+                Admin.ResetTokenExpires = DateTime.UtcNow.AddHours(24);
                 await _dataContext.SaveChangesAsync();
 
                 return Ok("You may now reset your password :)");

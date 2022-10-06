@@ -79,7 +79,6 @@ namespace Library.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CustomerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Genre")
@@ -108,7 +107,7 @@ namespace Library.Persistence.Migrations
 
             modelBuilder.Entity("Library.Model.Customer", b =>
                 {
-                    b.Property<string>("Username")
+                    b.Property<string>("CustomerId")
                         .HasColumnType("text");
 
                     b.Property<string>("Address")
@@ -145,7 +144,7 @@ namespace Library.Persistence.Migrations
                     b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Username");
+                    b.HasKey("CustomerId");
 
                     b.HasIndex("LibraryId");
 
@@ -177,19 +176,15 @@ namespace Library.Persistence.Migrations
 
             modelBuilder.Entity("Library.Model.Book", b =>
                 {
-                    b.HasOne("Library.Model.Customer", "Customers")
+                    b.HasOne("Library.Model.Customer", null)
                         .WithMany("Books")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("Library.Model.Library", "Library")
                         .WithMany("Books")
                         .HasForeignKey("LibraryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customers");
 
                     b.Navigation("Library");
                 });

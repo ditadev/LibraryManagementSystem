@@ -8,12 +8,12 @@ namespace Library.Api.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-public class PasswordResetController : ControllerBase
+public class UserPasswordResetController : ControllerBase
 {
     private readonly IRegistrationService _registrationService;
     private readonly DataContext _dataContext;
 
-    public PasswordResetController(DataContext dataContext, IRegistrationService registrationService)
+    public UserPasswordResetController(DataContext dataContext, IRegistrationService registrationService)
     {
         _dataContext = dataContext;
         _registrationService = registrationService;

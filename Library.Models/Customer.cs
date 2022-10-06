@@ -5,16 +5,17 @@ namespace Library.Model;
 
 public class Customer
 {
-    public string Username { get; set; }
+    public string CustomerId { get; set; }
     public string Firstname { get; set; }
     public string Lastname { get; set; }
     public string Address { get; set; }
-    public Library? Library { get; set; }
-    public List<Book> Books { get; set; }
+   [JsonIgnore] public Library? Library { get; set; }
+   
+   [JsonIgnore]public List<Book> Books { get; set; }
 
     [Required] [EmailAddress] public string Email { get; set; }
 
-    public string Password { get; set; }
+    [JsonIgnore]public string Password { get; set; }
 
     [JsonIgnore] public string? PasswordHash { get; set; }
 

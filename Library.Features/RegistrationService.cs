@@ -36,7 +36,7 @@ public class RegistrationService : IRegistrationService
     {
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, customer.Username),
+            new(ClaimTypes.Name, customer.CustomerId),
             new(ClaimTypes.Role, "Customer")
         };
 

@@ -28,7 +28,7 @@ public class UserRegistrationController : ControllerBase
         var passwordHash = await _registrationService.CreatePasswordHash(request.Password);
         var Customer = new Customer
         {
-            Username = request.Username,
+            CustomerId = request.CustomerId,
             Email = request.Email,
             Password = request.Password,
             Firstname = request.Firstname,
@@ -60,8 +60,9 @@ public class UserRegistrationController : ControllerBase
     public async Task<ActionResult> Verify(string Token)
     {
         var customer = await _dataContext.Customers.FirstOrDefaultAsync(u => u.VerificationToken == Token);
+        var tokenCheck = await _dataContext.Customers.Where(u => u.VerificationToken == Token).FirstOrDefaultAsync();
         if (User == null) return BadRequest("User not found :(");
-
+        if (tokenCheck==null) return BadRequest("Invalid Token :(");
         customer.VerifiedAt = DateTime.UtcNow;
         await _dataContext.SaveChangesAsync();
 

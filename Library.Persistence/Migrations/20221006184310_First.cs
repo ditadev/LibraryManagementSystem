@@ -57,7 +57,7 @@ namespace Library.Persistence.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Username = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<string>(type: "text", nullable: false),
                     Firstname = table.Column<string>(type: "text", nullable: false),
                     Lastname = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
@@ -71,7 +71,7 @@ namespace Library.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.Username);
+                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
                     table.ForeignKey(
                         name: "FK_Customers_Libraries_LibraryId",
                         column: x => x.LibraryId,
@@ -90,8 +90,8 @@ namespace Library.Persistence.Migrations
                     Available = table.Column<bool>(type: "boolean", nullable: true),
                     Collected = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ReturnDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CustomerId = table.Column<string>(type: "text", nullable: false),
-                    LibraryId = table.Column<string>(type: "text", nullable: false)
+                    LibraryId = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,8 +100,7 @@ namespace Library.Persistence.Migrations
                         name: "FK_Books_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Username",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CustomerId");
                     table.ForeignKey(
                         name: "FK_Books_Libraries_LibraryId",
                         column: x => x.LibraryId,

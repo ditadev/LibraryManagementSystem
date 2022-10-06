@@ -4,7 +4,7 @@ namespace Library.Api.Dtos;
 
 public class RegisterUserRequest
 {
-    public string Username { get; set; }
+    public string CustomerId { get; set; }
     public string Firstname { get; set; }
     public string Lastname { get; set; }
     public string Address { get; set; }

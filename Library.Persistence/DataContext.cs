@@ -36,13 +36,10 @@ public class DataContext : DbContext
 
         admin.HasNoKey();
         library.HasKey(l => l.LibraryId);
-        customer.HasKey(c => c.Username);
+        customer.HasKey(c => c.CustomerId);
         book.HasKey(b => b.ISBN);
         administrator.HasKey(a => a.AdminId);
-
-        book.HasOne(c => c.Customers)
-            .WithMany(b => b.Books)
-            .HasForeignKey("CustomerId").IsRequired();
+        
         customer.HasOne(c => c.Library)
             .WithMany(l => l.Customers).HasForeignKey("LibraryId");
 
