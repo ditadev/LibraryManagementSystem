@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace Library.Model;
 
-public class Customer
+public class User
 {
-    public string CustomerId { get; set; }
+    public long UserId { get; set; }
     public string Firstname { get; set; }
     public string Lastname { get; set; }
     public string Address { get; set; }
@@ -15,7 +15,8 @@ public class Customer
 
     [Required] [EmailAddress] public string Email { get; set; }
 
-    [JsonIgnore]public string Password { get; set; }
+    [JsonIgnore] public string Password { get; set; }
+    [JsonIgnore] public List<Role> Roles { get; set; }
 
     [JsonIgnore] public string? PasswordHash { get; set; }
 

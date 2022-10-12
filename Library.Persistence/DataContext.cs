@@ -15,10 +15,8 @@ public class DataContext : DbContext
     }
 
     public DbSet<Model.Library> Libraries { get; set; }
-    public DbSet<Customer> Customers { get; set; }
+    public DbSet<User> Customers { get; set; }
     public DbSet<Book> Books { get; set; }
-    public DbSet<Administrator> Administrators { get; set; }
-    public DbSet<AdminId> AdminIds { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -29,21 +27,19 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var library = modelBuilder.Entity<Model.Library>();
-        var customer = modelBuilder.Entity<Customer>();
+        var customer = modelBuilder.Entity<User>();
         var book = modelBuilder.Entity<Book>();
-        var administrator = modelBuilder.Entity<Administrator>();
-        var admin = modelBuilder.Entity<AdminId>();
-
-        admin.HasNoKey();
+     
+        
         library.HasKey(l => l.LibraryId);
-        customer.HasKey(c => c.CustomerId);
+        customer.HasKey(c => c.UserId);
         book.HasKey(b => b.ISBN);
-        administrator.HasKey(a => a.AdminId);
+       
         
         customer.HasOne(c => c.Library)
             .WithMany(l => l.Customers).HasForeignKey("LibraryId");
 
         customer.Ignore(x => x.Password);
-        administrator.Ignore(x => x.Password);
+       
     }
 }

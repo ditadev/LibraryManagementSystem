@@ -68,5 +68,27 @@ public class LibraryService : ILibraryService
         }
         return books;
     }
-    
+
+    public async Task<Book?> UpdateBook(Book book)
+    {
+        var oldBook = await _dataContext.Books.Where(b => b.ISBN == book.ISBN).SingleOrDefaultAsync();
+        if (oldBook==null)
+        {
+            return null;
+        }
+
+        oldBook.Title = oldBook.Title;
+        oldBook.ISBN = oldBook.ISBN;
+        oldBook.Author = oldBook.Author;
+        oldBook.Genre = oldBook.Genre;
+        oldBook.LibraryId = oldBook.LibraryId;
+        oldBook.Library = oldBook.Library;
+        oldBook.Available = book.Available;
+        oldBook.Collected = oldBook.Collected;
+        oldBook.ReturnDate=DateTime.UtcNow.AddDays(7);
+
+        _dataContext.Books.Update(oldBook);
+        await _dataContext.SaveChangesAsync();
+        return oldBook;
+    }
 }

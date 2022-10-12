@@ -28,33 +28,33 @@ namespace Library.Api.Controllers
         }
         
         [HttpPut]
-        public async Task<ActionResult<Customer>> UpdateProfile(UpdateUserRequest request)
+        public async Task<ActionResult<User>> UpdateProfile(UpdateUserRequest request)
         {
-            var customer = await _dataContext.Customers.FirstOrDefaultAsync(c => c.Email == request.Email);
-            if (customer == null) return BadRequest("User not found :(");
+            var user = await _dataContext.Customers.FirstOrDefaultAsync(c => c.Email == request.Email);
+            if (user == null) return BadRequest("User not found :(");
 
-            if (!_registrationService.VerifyPasswordHash(request.Password, customer.PasswordHash))
+            if (!_registrationService.VerifyPasswordHash(request.Password, user.PasswordHash))
                 return BadRequest("Incorrect Username/Password :(");
             
-            customer.Firstname = request.Firstname;
-            customer.Lastname = request.Lastname;
-            customer.Address = request.Address;
-            customer.CustomerId = customer.CustomerId;
-            customer.Email = customer.Email;
-            customer.Books = customer.Books;
-            customer.Library = customer.Library;
-            customer.PasswordHash = customer.PasswordHash;
-            customer.VerificationToken = customer.VerificationToken;
-            customer.VerifiedAt = customer.VerifiedAt;
-            customer.Password = customer.Password;
-            customer.PasswordResetToken = customer.PasswordResetToken;
-            customer.ResetTokenExpires = customer.ResetTokenExpires;
+            user.Firstname = request.Firstname;
+            user.Lastname = request.Lastname;
+            user.Address = request.Address;
+            user.UserId = user.UserId;
+            user.Email = user.Email;
+            user.Books = user.Books;
+            user.Library = user.Library;
+            user.PasswordHash = user.PasswordHash;
+            user.VerificationToken = user.VerificationToken;
+            user.VerifiedAt = user.VerifiedAt;
+            user.Password = user.Password;
+            user.PasswordResetToken = user.PasswordResetToken;
+            user.ResetTokenExpires = user.ResetTokenExpires;
 
-            if (request.CustomerId != customer.CustomerId)
+            if (request.UserId != user.UserId)
                 return BadRequest("Customer Id cannot be changed");
-                _dataContext.Customers.Update(customer);
+                _dataContext.Customers.Update(user);
                 await _dataContext.SaveChangesAsync();
-                return Ok(customer);
+                return Ok(user);
         }
 
         [HttpDelete]

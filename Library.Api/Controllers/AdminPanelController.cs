@@ -26,11 +26,19 @@ namespace Library.Api.Controllers
         {
             return Ok(await _libraryService.AddBook(book));
         }
+        
+        [HttpPost]
+        // [Authorize(Roles = "Customer")]
+        public async Task<ActionResult<Book>> Update(Book book)
+        {
+            return Ok(await _libraryService.UpdateBook(book));
+        }
+        
         [HttpDelete]
         public async Task<ActionResult> DeleteBook(string ISBN)
         {
             await _libraryService.DeleteBook(ISBN);
-            return Ok("Delete successful");
+            return Ok(new {result = "Delete successful"});
         }
     }
 }

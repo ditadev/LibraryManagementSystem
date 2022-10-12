@@ -10,10 +10,12 @@ namespace Library.Features;
 
 public class RegistrationService : IRegistrationService
 {
+    private readonly AppSettings _appSettings;
     private readonly IConfiguration _configuration;
 
-    public RegistrationService(IConfiguration configuration)
+    public RegistrationService(AppSettings appSettings,IConfiguration configuration)
     {
+        _appSettings = appSettings;
         _configuration = configuration;
     }
 
@@ -32,28 +34,23 @@ public class RegistrationService : IRegistrationService
         return await Task.FromResult(Convert.ToHexString(RandomNumberGenerator.GetBytes(8)));
     }
 
-    public async Task<string> CreateCustomerJwt(Customer customer)
+    public async Task<string> CreateCustomerJwt(User user)
     {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Name, customer.CustomerId),
-            new(ClaimTypes.Role, "Customer")
-        };
-
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
-
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JwtSecret));
         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        var claims = new List<Claim> { new("UserId", user.UserId.ToString()),
+            new("sub", user.UserId.ToString()), 
+            new("role", "Default") };
+        
+        claims.AddRange(user.Roles.Select(role => new Claim("role", role.ToString())));
 
-        var token = new JwtSecurityToken
-        (
-            claims: claims,
-            expires: DateTime.Now.AddDays(1),
-            signingCredentials: cred
-        );
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return await Task.FromResult(jwt);
+        return await Task.FromResult((new JwtSecurityTokenHandler().WriteToken(
+            new JwtSecurityToken
+            (
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: cred
+            ))));
     }
     public async Task<string?> CreateAdministratorJwt(Administrator admin)
     {

@@ -4,7 +4,7 @@ namespace Library.Api.Dtos;
 
 public class UpdateUserRequest
 {
-    public string CustomerId { get; set; }
+    public long UserId { get; set; }
     [Required] [EmailAddress] public string Email { get; set; }
     [Required] public string Password { get; set; }
     public string Firstname { get; set; }

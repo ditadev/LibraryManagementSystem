@@ -11,13 +11,15 @@ namespace Library.Api.Controllers;
 [ApiController]
 public class UserRegistrationController : ControllerBase
 {
+    private readonly ILogger<UserRegistrationController> _logger;
     private readonly IRegistrationService _registrationService;
     private readonly DataContext _dataContext;
 
-    public UserRegistrationController(DataContext dataContext, IRegistrationService registrationService)
+    public UserRegistrationController(DataContext dataContext, IRegistrationService registrationService, ILogger<UserRegistrationController> logger)
     {
         _dataContext = dataContext;
         _registrationService = registrationService;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -26,9 +28,9 @@ public class UserRegistrationController : ControllerBase
         var customer = await _dataContext.Customers.Where(c => c.Email == request.Email).FirstOrDefaultAsync();
         if (customer != null) return BadRequest("User Already Exist");
         var passwordHash = await _registrationService.CreatePasswordHash(request.Password);
-        var Customer = new Customer
+        var Customer = new User
         {
-            CustomerId = request.CustomerId,
+            UserId = request.UserId,
             Email = request.Email,
             Password = request.Password,
             Firstname = request.Firstname,
@@ -37,6 +39,7 @@ public class UserRegistrationController : ControllerBase
             VerificationToken = await _registrationService.CreateRandomToken(),
             PasswordHash = passwordHash
         };
+        _logger.LogInformation($"Verification Token {Customer.VerificationToken}");
         _dataContext.Customers.Add(Customer);
         await _dataContext.SaveChangesAsync();
         return Ok(" Successfully Created :)");
@@ -52,7 +55,11 @@ public class UserRegistrationController : ControllerBase
 
         if (!_registrationService.VerifyPasswordHash(request.Password, customer.PasswordHash))
             return BadRequest("Incorrect Username/Password :(");
-        var token = await _registrationService.CreateCustomerJwt(customer);
+        var token = new JwtDto
+        {
+            AccessToken = await _registrationService.CreateCustomerJwt(customer)
+        };
+        
         return Ok($"Welcome back, {customer.Email}! :)\n\n{token}");
     }
 
@@ -66,6 +73,6 @@ public class UserRegistrationController : ControllerBase
         customer.VerifiedAt = DateTime.UtcNow;
         await _dataContext.SaveChangesAsync();
 
-        return Ok("User Verified :)");
+        return Ok(new {result = "User Verified :)"});
     }
 }
