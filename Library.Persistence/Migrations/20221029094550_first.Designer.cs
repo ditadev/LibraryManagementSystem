@@ -12,58 +12,17 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221011202425_initial")]
-    partial class initial
+    [Migration("20221029094550_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Library.Model.AdminId", b =>
-                {
-                    b.Property<string>("NewAdminId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.ToTable("AdminIds");
-                });
-
-            modelBuilder.Entity("Library.Model.Administrator", b =>
-                {
-                    b.Property<string>("AdminId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LibraryId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordResetToken")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ResetTokenExpires")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("AdminId");
-
-                    b.HasIndex("LibraryId");
-
-                    b.ToTable("Administrators");
-                });
 
             modelBuilder.Entity("Library.Model.Book", b =>
                 {
@@ -75,13 +34,11 @@ namespace Library.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<bool?>("Available")
+                        .IsRequired()
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("Collected")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("text");
 
                     b.Property<string>("Genre")
                         .IsRequired()
@@ -98,19 +55,45 @@ namespace Library.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("ISBN");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("ISBN")
+                        .IsUnique();
 
                     b.HasIndex("LibraryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("Library.Model.Customer", b =>
+            modelBuilder.Entity("Library.Model.Library", b =>
                 {
-                    b.Property<string>("CustomerId")
+                    b.Property<string>("LibraryId")
                         .HasColumnType("text");
+
+                    b.Property<string>("LibraryName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("LibraryId");
+
+                    b.HasIndex("LibraryName")
+                        .IsUnique();
+
+                    b.ToTable("Libraries");
+                });
+
+            modelBuilder.Entity("Library.Model.User", b =>
+                {
+                    b.Property<long>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("UserId"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -129,6 +112,7 @@ namespace Library.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LibraryId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
@@ -140,50 +124,48 @@ namespace Library.Persistence.Migrations
                     b.Property<DateTime?>("ResetTokenExpires")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int[]>("Roles")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
                     b.Property<string>("VerificationToken")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("CustomerId");
+                    b.HasKey("UserId");
+
+                    b.HasIndex("Address")
+                        .IsUnique();
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.HasIndex("LibraryId");
 
-                    b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("Library.Model.Library", b =>
-                {
-                    b.Property<string>("LibraryId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LibraryName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("LibraryId");
-
-                    b.ToTable("Libraries");
-                });
-
-            modelBuilder.Entity("Library.Model.Administrator", b =>
-                {
-                    b.HasOne("Library.Model.Library", "Library")
-                        .WithMany("Administrators")
-                        .HasForeignKey("LibraryId");
-
-                    b.Navigation("Library");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Library.Model.Book", b =>
                 {
-                    b.HasOne("Library.Model.Customer", null)
-                        .WithMany("Books")
-                        .HasForeignKey("CustomerId");
-
                     b.HasOne("Library.Model.Library", "Library")
                         .WithMany("Books")
+                        .HasForeignKey("LibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Library.Model.User", null)
+                        .WithMany("Books")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Library");
+                });
+
+            modelBuilder.Entity("Library.Model.User", b =>
+                {
+                    b.HasOne("Library.Model.Library", "Library")
+                        .WithMany("Users")
                         .HasForeignKey("LibraryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -191,27 +173,16 @@ namespace Library.Persistence.Migrations
                     b.Navigation("Library");
                 });
 
-            modelBuilder.Entity("Library.Model.Customer", b =>
-                {
-                    b.HasOne("Library.Model.Library", "Library")
-                        .WithMany("Customers")
-                        .HasForeignKey("LibraryId");
-
-                    b.Navigation("Library");
-                });
-
-            modelBuilder.Entity("Library.Model.Customer", b =>
-                {
-                    b.Navigation("Books");
-                });
-
             modelBuilder.Entity("Library.Model.Library", b =>
                 {
-                    b.Navigation("Administrators");
-
                     b.Navigation("Books");
 
-                    b.Navigation("Customers");
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Library.Model.User", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }
